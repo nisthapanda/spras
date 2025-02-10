@@ -48,7 +48,7 @@ def download_gcs(gcs_path: str, local_path: str, is_dir: bool):
         os.makedirs(Path(local_path).parent)
 
     # build command
-    cmd = 'gsutil -m rsync -c'
+    cmd = 'gcloud storage'
     # rsync with checksums to make file transfer faster for larger files
     cmd = cmd + ' rsync --checksums-only'
     # check if directory
