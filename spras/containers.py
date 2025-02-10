@@ -48,7 +48,7 @@ def download_gcs(gcs_path: str, local_path: str, is_dir: bool):
         os.makedirs(Path(local_path).parent)
 
     # build command
-    cmd = 'gcloud storage'
+    cmd = 'gsutil -m rsync -c'
     # rsync with checksums to make file transfer faster for larger files
     cmd = cmd + ' rsync --checksums-only'
     # check if directory
@@ -60,24 +60,24 @@ def download_gcs(gcs_path: str, local_path: str, is_dir: bool):
     # run command
     subprocess.run(cmd, shell=True)
 
-    if is_dir and Path(Path(local_path)/'gcs_temp.txt').exists():
-        os.remove(Path(Path(local_path)/'gcs_temp.txt'))
+    if Path(Path(local_path)/'gcs_temp.txt').exists():
+        Path(Path(local_path)/'gcs_temp.txt').unlink()
 
 def upload_gcs(local_path: str, gcs_path: str, is_dir: bool):
     # check if path exists in cloud storage
     exists = len(subprocess.run(f'gcloud storage ls {gcs_path}', shell=True, capture_output=True, text=True).stdout)
     # if path exists rsyc
     if exists > 0:
-        cmd = 'gcloud storage rsync --checksums-only'
+        cmd = 'gsutil -m rsync -c'
     # if directory is empty
     elif exists == 0 and len(os.listdir(local_path)) == 0:
         # create a temporary file because GCS will not recognize empty directories
         Path(Path(local_path)/'gcs_temp.txt').touch()
         # copy path to cloud storage
-        cmd = 'gcloud storage cp -c'
+        cmd = 'gsutil -m cp'
     # else copy path to cloud storage
     else:
-        cmd = 'gcloud storage cp -c'
+        cmd = 'gsutil -m cp'
     # check if directory
     if is_dir:
         cmd = cmd + ' -r'
