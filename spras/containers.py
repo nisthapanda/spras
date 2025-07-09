@@ -95,16 +95,17 @@ def upload_gcs(local_path: str, gcs_path: str, is_dir: bool):
 def prepare_dsub_cmd(flags: dict[str, str | list[str]]):
     # set constant flags
     dsub_command = 'dsub'
-    flags['provider'] = 'google-cls-v2'
+    flags['provider'] = 'google-batch'
     flags['regions'] = 'us-central1'
     flags['user-project'] = os.getenv('GOOGLE_PROJECT')
     flags['project'] = os.getenv('GOOGLE_PROJECT')
-    flags['network'] = 'network'
-    flags['subnetwork'] = 'subnetwork'
+    flags['network'] = 'global/networks/network'
+    flags['subnetwork'] = 'regions/us-central1/subnetworks/subnetwork'
+    flags['use-private-address'] = ''
     flags['service-account'] = subprocess.run(['gcloud', 'config', 'get-value', 'account'], capture_output=True, text=True).stdout.replace('\n', '')
 
     # order flags according to flag_list
-    flag_list = ["provider", "regions", "zones", "location", "user-project", "project", "network", "subnetwork", "service-account", "image", "env",
+    flag_list = ["provider", "regions", "zones", "location", "user-project", "project", "network", "subnetwork", "use-private-address", "service-account", "image", "env",
                  "logging", "input", "input-recursive", "mount", "output", "output-recursive", "command", "script"]
     ordered_flags = {f:flags[f] for f in flag_list if f in flags.keys()}
 
