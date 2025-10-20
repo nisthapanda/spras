@@ -99,6 +99,7 @@ def prepare_dsub_cmd(flags: dict[str, str | list[str]]):
     dsub_command = 'dsub'
     flags['provider'] = 'google-batch'
     flags['regions'] = 'us-central1'
+    flags['unique-job-id'] = ''
     flags['user-project'] = os.getenv('GOOGLE_PROJECT')
     flags['project'] = os.getenv('GOOGLE_PROJECT')
     flags['network'] = 'global/networks/network'
@@ -107,8 +108,9 @@ def prepare_dsub_cmd(flags: dict[str, str | list[str]]):
     flags['service-account'] = subprocess.run(['gcloud', 'config', 'get-value', 'account'], capture_output=True, text=True).stdout.replace('\n', '')
 
     # order flags according to flag_list
-    flag_list = ["provider", "regions", "zones", "location", "user-project", "project", "network", "subnetwork", "use-private-address", "service-account", "image", "env",
-                 "logging", "input", "input-recursive", "mount", "output", "output-recursive", "command", "script"]
+    flag_list = ["provider", "unique-job-id", "regions", "zones", "location", "user-project", "project", "network", "subnetwork",
+                 "use-private-address", "service-account", "image", "env", "logging", "input", "input-recursive", "mount", 
+                 "output", "output-recursive", "command", "script"]
     ordered_flags = {f:flags[f] for f in flag_list if f in flags.keys()}
 
     # iteratively add flags to the command
